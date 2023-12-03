@@ -25,4 +25,16 @@ open Base
 
 
 let () =
-    Stdlib.print_endline "Hello, World!"
+    In_channel.input_line In_channel.stdin
+    |> Option.value_exn
+    |> String.fold_until ~init:(0,0)
+        ~f:(fun (floor, i) -> function
+            | '(' -> Continue (floor + 1, i + 1)
+            | ')' ->
+                if floor = 0
+                then Stop (i + 1)
+                else Continue (floor - 1, i + 1)
+            | _ -> assert false)
+        ~finish:snd
+    |> Stdlib.print_int
+    |> Stdlib.print_newline
